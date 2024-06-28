@@ -1,18 +1,55 @@
----
-name: ⚠️ Bug/Issue report
-about: Please provide as much detail as possible to help us with a bug or issue.
----
+<activity
+    android:name=".MainActivity"
+    android:label="@string/app_name"
+    android:exported="true"
+    android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+    android:launchMode="singleTask"
+    android:windowSoftInputMode="adjustResize">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
 
-## Issue
+<activity
+    android:name="net.openid.appauth.AuthorizationManagementActivity"
+   >
+    <intent-filter >
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="com.example.appname" android:host="callback" />
+    </intent-filter>
+</activity>
+build.gradle:
+manifestPlaceholders = [appAuthRedirectScheme: "com.example.appname"]
 
-<!-- Please describe your issue here --^ and provide as much detail as you can. If the issue can not be easily replicated, it's unlikely to be quickly resolved! -->
+my config:
+{
+"additionalParameters": {
+"grant_type": "authorization_code"
+},
+"clientId": "{clientid}",
+"clientSecret": "{secretkey}",
+"issuer": "https://{myoktasiteurl}/oauth2/default",
+"redirectUrl": "com.example.appname:/callback",
+"responseTypes": "code",
+"scopes": [
+"openid",
+"profile",
+"offline_access"
+],
+"serviceConfiguration": {
+"authorizationEndpoint": "https://{myoktasiteurl}/oauth2/default/v1/authorize",
+"endSessionEndpoint": "https:/{myoktasiteurl}/oauth2/default/v1/logout",
+"tokenEndpoint": "https://{myoktasiteurl}/oauth2/default/v1/token"
+},
+"useNonce": false,
+"usePKCE": true
+}
 
----
+working fine in iOS but android, it was not redirecting to my app after the login and after while login the okta site from the app if we close and open the app it shows {"nativeStackAndroid":[],"userInfo":null,"message":"User cancelled flow","code":"authentication_error"}
 
-## Environment
-<!-- These details are IMPORTANT to help with replication of the issue -->
-* **Your Identity Provider**: `e.g. IdentityServer 4 / Okta / Azure`
-* **Platform that you're experiencing the issue on**: `iOS / Android / both`
-* **Your `react-native` Version**: `e.g. 0.72.1`
-* **Your `react-native-app-auth` Version**: `e.g. 7.0.0`
-* **Are you using Expo?**
+This is iOS config:
+
+CFBundleURLName $(PRODUCT_BUNDLE_IDENTIFIER) CFBundleURLSchemes {myoktasiteurl}
